@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Lista de Productos</h1>
+
+    <p><a href="{{ path('app_product_create') }}">Crear nuevo producto</a></p>
+
+    {% if products is empty %}
+        <p>No hay productos registrados.</p>
+    {% else %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    {{ product.name }} - ${{ product.price }}
+                    (<a href="{{ path('app_product_show', {id: product.id}) }}">Ver</a> |
+                    <a href="{{ path('app_product_edit', {id: product.id}) }}">Editar</a> |
+                    <a href="{{ path('app_product_delete', {id: product.id}) }}">Eliminar</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
