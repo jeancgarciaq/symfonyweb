@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostControlerController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+	<h1>{{ post.title }}</h1>
+	<p>Categoría: **{{ post.category ? post.category.name : 'N/A' }}**</p>
+	<p>Publicado el: {{ post.createdAt|date('Y-m-d H:i') }}</p>
+	<p>{{ post.content|nl2br }}</p>
+
+	<h2>Comentarios</h2>
+	{% if post.comments is empty %}
+	    <p>No hay comentarios para esta publicación.</p>
+	{% else %}
+	    <ul>
+	        {% for comment in post.comments %} {# Acceso a la colección de comentarios #}
+	            <li>
+	                <strong>{{ comment.author }}</strong> el {{ comment.createdAt|date('Y-m-d H:i') }}
+	                <p>{{ comment.content|nl2br }}</p>
+	            </li>
+	        {% endfor %}
+	    </ul>
+	{% endif %}
+
+	<p><a href="{{ path('app_post_index') }}">Volver a la lista de publicaciones</a></p>
+</div>
+{% endblock %}

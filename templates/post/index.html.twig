@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Lista de Publicaciones</h1>
+
+    <p><a href="{{ path('app_post_create') }}">Crear nueva publicación</a></p>
+
+    {% if posts is empty %}
+        <p>No hay publicaciones registradas.</p>
+    {% else %}
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <h3>{{ post.title }}</h3>
+                    <p>Categoría: **{{ post.category ? post.category.name : 'N/A' }}**</p> {# Acceso a la categoría #}
+                    <p>Publicado el: {{ post.createdAt|date('Y-m-d H:i') }}</p>
+                    <p>
+                        <a href="{{ path('app_post_show', {id: post.id}) }}">Ver Detalles</a> |
+                        <a href="{{ path('app_post_edit', {id: post.id}) }}">Editar</a> |
+                        <form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" 
+                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar {{ post.title }}?');" 
+                          style="display:inline;" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                            <button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; padding: 0;">Eliminar</button>
+                        </form>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
+
