@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CategoryController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Lista de Categorias</h1>
+
+    <p><a href="{{ path('app_product_create') }}">Crear nuevo producto</a></p>
+
+    {% if categories is empty %}
+        <p>No hay categorias registrados.</p>
+    {% else %}
+        <ul>
+            {% for category in categories %}
+                <li>
+                    {{ category.name }} - ${{ category.slug }}
+                    (<a href="{{ path('app_category_show', {id: category.id}) }}">Ver</a> |
+                    <a href="{{ path('app_category_edit', {id: category.id}) }}">Editar</a> |
+                    <form method="post" action="{{ path('app_category_delete', {'id': category.id}) }}" 
+                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar {{ category.name }}?');" 
+                          style="display:inline;" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                        <button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; padding: 0;">Eliminar</button>
+                    </form>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
