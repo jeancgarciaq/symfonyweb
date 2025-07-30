@@ -22,7 +22,13 @@
                     {{ product.name }} - ${{ product.price }}
                     (<a href="{{ path('app_product_show', {id: product.id}) }}">Ver</a> |
                     <a href="{{ path('app_product_edit', {id: product.id}) }}">Editar</a> |
-                    <a href="{{ path('app_product_delete', {id: product.id}) }}">Eliminar</a>)
+                    <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" 
+                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar {{ product.name }}?');" 
+                          style="display:inline;" class="d-inline"> {# 'd-inline' para mantenerlo en la misma línea con Bootstrap #}
+                        {# Este campo oculto es el token CSRF, ¡INDISPENSABLE para la seguridad! #}
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; padding: 0;">Eliminar</button>
+                    </form>)
                 </li>
             {% endfor %}
         </ul>
