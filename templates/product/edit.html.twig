@@ -1,0 +1,49 @@
+{# templates/product/edit.html.twig #}
+{% extends 'base.html.twig' %} {# Asegúrate de que 'base.html.twig' exista y sea tu plantilla principal #}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        {# Asegúrate de que la variable 'product' se pase desde el controlador #}
+                        <h1 class="h3 mb-0">Editar Producto: {{ product.name|default('N/A') }}</h1>
+                    </div>
+                    <div class="card-body">
+                        {# Muestra errores generales del formulario, si los hay #}
+                        {{ form_errors(productForm) }}
+
+                        {# Inicia el formulario, 'productForm' es la variable que pasas desde el controlador #}
+                        {{ form_start(productForm) }}
+                            
+                            {# Renderiza cada campo del formulario. Asegúrate que estos campos existan en tu ProductFormType #}
+                            <div class="mb-3">
+                                {{ form_row(productForm.name) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_row(productForm.description) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_row(productForm.price) }}
+                            </div>
+                            {# Añade más 'form_row' aquí para cualquier otro campo de tu entidad Product #}
+
+                            {# Renderiza el botón de enviar. Asumo que se llama 'save' en tu ProductFormType #}
+                            <div class="d-grid mt-4">
+                                {{ form_row(productForm.save) }}
+                            </div>
+                        {{ form_end(productForm) }}
+                        
+                        {# Enlace para volver al listado de productos #}
+                        <div class="mt-3 text-center">
+                            <a href="{{ path('app_product_index') }}" class="btn btn-secondary btn-sm">Volver al listado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
