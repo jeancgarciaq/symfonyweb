@@ -1,0 +1,43 @@
+{# templates/category/edit.html.twig #}
+{% extends 'base.html.twig' %} {# Asegúrate de que 'base.html.twig' exista y sea tu plantilla principal #}
+
+{% block title %}Editar Categoria{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 mb-0">Editar Categoria: {{ category.name|default('N/A') }}</h1>
+                    </div>
+                    <div class="card-body">
+                        {# Muestra errores generales del formulario, si los hay #}
+                        {{ form_errors(productForm) }}
+
+                        {# Inicia el formulario, 'categoryForm' es la variable que pasas desde el controlador #}
+                        {{ form_start(categoryForm) }}
+                            
+                            {# Renderiza cada campo del formulario. Asegúrate que estos campos existan en tu CategoryFormType #}
+                            <div class="mb-3">
+                                {{ form_row(categoryForm.name) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_row(categoryForm.slug) }}
+                            </div>
+                            {# Renderiza el botón de enviar. Asumo que se llama 'save' en tu CategoryFormType #}
+                            <div class="d-grid mt-4">
+                                {{ form_row(categoryForm.save) }}
+                            </div>
+                        {{ form_end(categoryForm) }}
+                        
+                        {# Enlace para volver al listado de productos #}
+                        <div class="mt-3 text-center">
+                            <a href="{{ path('app_category_index') }}" class="btn btn-secondary btn-sm">Volver al listado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
