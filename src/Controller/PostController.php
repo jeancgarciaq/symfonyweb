@@ -6,11 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Post;
-use App\Entity\Category; // Importa la entidad Category
+use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\Tag;
 use App\Repository\PostRepository;
-use App\Repository\CategoryRepository; // Importa el repositorio de Category
+use App\Repository\CategoryRepository;
+use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 final class PostController extends AbstractController
 {
@@ -107,5 +110,34 @@ final class PostController extends AbstractController
         $entityManager->flush();
 
         return new Response('Comentario añadido a la publicación con ID: ' . $post->getId());
+    }
+
+    #[Route('/post/{id}/add-tag/{slug}', name: 'app_post_add_tag')]
+    public function addTag(
+        Post $post, // El post al que queremos añadir la etiqueta
+        string $slug, // El slug de la etiqueta que queremos encontrar
+        EntityManagerInterface $entityManager,
+        TagRepository $tagRepository // Inyectamos el repositorio de Tag
+    ): Response {
+        // 1. Buscamos la etiqueta por su slug en el repositorio
+        $tag = $tagRepository->findOneBy(['slug' => $slug]);
+
+        if (!$tag) {
+            // Si la etiqueta no existe, podemos crearla al vuelo o mostrar un error
+            $tag = new Tag();
+            $tag->setName($slug);
+            $tag->setSlug($slug);
+            $entityManager->persist($tag);
+            $this->addFlash('info', 'La etiqueta "' . $slug . '" no existía y ha sido creada.');
+        }
+
+        // 2. Usamos el método addTag() del Post para establecer la relación
+        $post->addTag($tag);
+        
+        // 3. No es necesario persistir el post de nuevo, pero sí el tag si es nuevo
+        $entityManager->flush();
+
+        $this->addFlash('success', '✅ Etiqueta "' . $tag->getName() . '" añadida al post.');
+        return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
     }
 }
