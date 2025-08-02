@@ -5,8 +5,10 @@ namespace App\Entity;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Tag;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -29,12 +31,25 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $slug = null;
+
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', orphanRemoval: true)]
     private Collection $comments;
 
+    /**
+     * Many Posts have Many Tags.
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'posts')]
+    #[JoinTable(name: 'post_tag')]
+    private Collection $tags;
+
+    
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->tags = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -79,6 +94,17 @@ class Post
         return $this;
     }
 
+    public function getSlug(): ?string 
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static 
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
     public function getCategory(): ?Category
     {
         return $this->category;
@@ -103,7 +129,7 @@ class Post
     {
         if (!$this->comments->contains($comment)) {
             $this->comments->add($comment);
-            $comment->setPost($this);
+            $comment->setPost($this); // Asegura que el lado dueño de la relación Comment->Post se actualice
         }
 
         return $this;
@@ -118,6 +144,34 @@ class Post
             }
         }
 
+        return $this;
+    }
+       
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static 
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            // Lado dueño: añade el Tag a su colección y luego llama al método addPost en el Tag (lado inverso)
+            $tag->addPost($this);    
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag):static
+    {
+        if($this->tags->removeElement($tag))
+        {
+            $tag->removePost($this);
+        }
         return $this;
     }
 }
