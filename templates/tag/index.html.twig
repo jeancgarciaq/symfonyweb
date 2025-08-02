@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TagController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Lista de Tags</h1>
+
+    <p><a href="{{ path('app_product_create') }}">Crear nuevas etiquetas</a></p>
+
+    {% if tags is empty %}
+        <p>No hay etiquetas registradas.</p>
+    {% else %}
+        <ul>
+            {% for tag in tags %}
+                <li>
+                    {{ tag.name }} - ${{ tag.slug }}
+                    (<a href="{{ path('app_tag_show', {id: tag.id}) }}">Ver</a> |
+                    <a href="{{ path('app_tag_edit', {id: tag.id}) }}">Editar</a> |
+                    <form method="post" action="{{ path('app_tag_delete', {'id': tag.id}) }}" 
+                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar {{ tag.name }}?');" 
+                          style="display:inline;" class="d-inline">
+                        {# Este campo oculto es el token CSRF, ¡INDISPENSABLE para la seguridad! #}
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tag.id) }}">
+                        <button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; padding: 0;">Eliminar</button>
+                    </form>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
