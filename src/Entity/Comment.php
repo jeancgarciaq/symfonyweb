@@ -74,12 +74,12 @@ class Comment
 
     public function getPost(): ?Post
     {
-        return $this->Post;
+        return $this->post;
     }
 
-    public function setPost(?Post $Post): static
+    public function setPost(?Post $post): static
     {
-        $this->Post = $Post;
+        $this->post = $post;
 
         return $this;
     }
