@@ -28,6 +28,19 @@
 	    </ul>
 	{% endif %}
 
+	<h2>Etiquetas</h2>
+	{% if post.tags is empty %}
+	    <p>No hay etiquetas para esta publicación.</p>
+	{% else %}
+	    <ul>
+	        {% for tag in post.tags %} {# Acceso a la colección de etiquetas #}
+	            <li>
+	                <strong>{{ tag.name }}</strong> slug: {{ tag.slug }}
+	            </li>
+	        {% endfor %}
+	    </ul>
+	{% endif %}
+
 	<p><a href="{{ path('app_post_index') }}">Volver a la lista de publicaciones</a></p>
 </div>
 {% endblock %}
